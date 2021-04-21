@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{page}', function () {
+// change and check for auth
+Route::get('/', function () {
     return view('welcome');
-})->where('page', '.*');
+})->name('home');
+
+Route::get('/login', function () {
+    return view('welcome');
+})->name('login');
+
+Route::get('/register', function () {
+    return view('welcome');
+})->name('register');
+
 

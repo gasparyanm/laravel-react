@@ -5,6 +5,7 @@ import FlashMessage from 'react-flash-message';
 class LoginContainer extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             isLoggedIn: false,
             error: '',
@@ -16,6 +17,7 @@ class LoginContainer extends Component {
             redirect: props.redirect,
         };
 
+        this.checkAuth = this.checkAuth.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleEmail = this.handleEmail.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
@@ -27,17 +29,28 @@ class LoginContainer extends Component {
             this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
         }
     }
-    UNSAFE_componentDidMount() {
+    componentDidMount() {
         const { prevLocation } = this.state.redirect.state || { prevLocation: { pathname: '/dashboard' } };
         if (prevLocation && this.state.isLoggedIn) {
             return this.props.history.push(prevLocation);
+        }
+    }
+    checkAuth() {
+        let token = localStorage['token'];
+        if (token) {
+            const config = {
+                headers: { Authorization: `Bearer ${token}` }
+            };
+
+            axios.get('api/user', config)
+                .then(resp => console.log('RESPONSE::', resp))
         }
     }
     handleSubmit(e) {
         e.preventDefault();
         this.setState({formSubmitting: true});
         let userData = this.state.user;
-        axios.post("/api/auth/login", userData).then(response => {
+        axios.post("/api/login", userData).then(response => {
             return response;
         }).then(json => {
             if (json.data.success) {
