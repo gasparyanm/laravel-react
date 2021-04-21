@@ -20,6 +20,7 @@ class AuthController extends Controller
         $registerRepository->registerUser($request->validated());
 
         return response()->json([
+            'success' => true,
             'message' => 'Successfully created user!'
         ], 201);
     }
