@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Services\RegisterService;
+use App\Repository\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,10 +14,9 @@ class AuthController extends Controller
     /**
      * Register user
      */
-    public function register(RegisterRequest $request, RegisterService $registerRepository): JsonResponse
+    public function register(RegisterRequest $request, UserRepositoryInterface $userRepository): JsonResponse
     {
-        // change to repository pattern
-        $registerRepository->registerUser($request->validated());
+        $user = $userRepository->registerUser($request->validated());
 
         return response()->json([
             'success' => true,
