@@ -8,6 +8,7 @@ import NotFound from '../views/NotFound'
 // User is LoggedIn
 import PrivateRoute from './PrivateRoute'
 import Dashboard from '../views/user/Dashboard/Dashboard';
+import Announcement from '../views/user/Dashboard/Announcement';
 
 const Main = props => (
     <Switch>
@@ -18,6 +19,7 @@ const Main = props => (
         <Route path='/register' component={Register}/>
         {/* User is LoggedIn*/}
         <PrivateRoute path='/dashboard' component={Dashboard}/>
+        <PrivateRoute path='/announcement' component={Announcement}/>
         {/*Page Not Found*/}
         <Route component={NotFound}/>
     </Switch>

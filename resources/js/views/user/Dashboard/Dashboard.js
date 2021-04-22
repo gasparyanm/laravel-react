@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
-import FlashMessage from 'react-flash-message';
 
 class Home extends Component {
     constructor(props) {
@@ -63,10 +62,9 @@ class Home extends Component {
 
         }
     }
-// 4.1
     render() {
         let state = this.state;
-        console.log('state:::', state.user)
+
         return state.user.id? (
             <div>
                 <Header userData={state.user} userIsLoggedIn={state.isLoggedIn}/>

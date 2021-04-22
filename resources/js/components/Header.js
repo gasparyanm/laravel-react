@@ -21,7 +21,6 @@ class Header extends Component {
         this.setState(appState);
         this.props.history.push('/login');
     }
-    // 1.3
     render() {
         const aStyle = {
             cursor: 'pointer'
