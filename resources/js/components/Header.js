@@ -30,7 +30,9 @@ class Header extends Component {
         return (
             <nav className="navbar">
                 <ul>
-                    <li><Link to="/" style={aStyle}>Index</Link></li>
+                    <li>
+                        <Link to="/announcement" style={aStyle}> Announcement meta </Link>
+                    </li>
                     {this.state.isLoggedIn ?
                         <li className="has-sub"><Link to="/dashboard">Dashboard</Link></li> : ""}
                     {!this.state.isLoggedIn ?
