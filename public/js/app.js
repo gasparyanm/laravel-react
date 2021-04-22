@@ -2196,9 +2196,9 @@ var Header = /*#__PURE__*/function (_Component) {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("ul", {
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("li", {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_2__.Link, {
-              to: "/",
+              to: "/announcement",
               style: aStyle,
-              children: "Index"
+              children: " Announcement meta "
             })
           }), this.state.isLoggedIn ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("li", {
             className: "has-sub",
@@ -2383,7 +2383,8 @@ var PrivateRoute = function PrivateRoute(_ref) {
           pathname: "/login",
           state: {
             prevLocation: path,
-            error: "You need to login first!"
+            error: "" // "You need to login first.",
+
           }
         }
       });
@@ -2506,7 +2507,6 @@ var Login = /*#__PURE__*/function (_Component) {
     _classCallCheck(this, Login);
 
     _this = _super.call(this, props);
-    console.log('Login::', props.location);
     _this.state = {
       redirect: props.location
     };
@@ -2606,53 +2606,36 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
     };
     _this.checkAuth = _this.checkAuth.bind(_assertThisInitialized(_this));
     _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_this));
-    _this.handleEmail = _this.handleEmail.bind(_assertThisInitialized(_this));
-    _this.handlePassword = _this.handlePassword.bind(_assertThisInitialized(_this));
+    _this.handleInputs = _this.handleInputs.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(LoginContainer, [{
     key: "UNSAFE_componentWillMount",
-    value: function UNSAFE_componentWillMount() {
-      var state = localStorage["appState"];
-
-      if (state) {
-        var AppState = JSON.parse(state);
-        this.setState({
-          isLoggedIn: AppState.isLoggedIn,
-          user: AppState
-        });
-      }
+    value: function UNSAFE_componentWillMount() {// let state = localStorage["appState"];
+      // if (state) {
+      //     let AppState = JSON.parse(state);
+      //     this.setState({isLoggedIn: AppState.isLoggedIn, user: AppState});
+      // }
     }
   }, {
     key: "componentDidMount",
-    value: function componentDidMount() {
-      var _ref = this.state.redirect.state || {
-        prevLocation: {
-          pathname: '/dashboard'
-        }
-      },
-          prevLocation = _ref.prevLocation;
-
-      if (prevLocation && this.state.isLoggedIn) {
-        return this.props.history.push(prevLocation);
-      }
+    value: function componentDidMount() {// const { prevLocation } = this.state.redirect.state || { prevLocation: { pathname: '/dashboard' } };
+      // if (prevLocation && this.state.isLoggedIn) {
+      //     return this.props.history.push(prevLocation);
+      // }
     }
   }, {
     key: "checkAuth",
-    value: function checkAuth() {
-      var token = localStorage['token'];
-
-      if (token) {
-        var config = {
-          headers: {
-            Authorization: "Bearer ".concat(token)
-          }
-        };
-        axios.get('api/user', config).then(function (resp) {
-          return console.log('RESPONSE::', resp);
-        });
-      }
+    value: function checkAuth() {// let token = localStorage['token'];
+      // if (token) {
+      //     const config = {
+      //         headers: { Authorization: `Bearer ${token}` }
+      //     };
+      //
+      //     axios.get('api/user', config)
+      //         .then(resp => console.log('RESPONSE::', resp))
+      // }
     }
   }, {
     key: "handleSubmit",
@@ -2664,10 +2647,12 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
         formSubmitting: true
       });
       var userData = this.state.user;
+      console.log(userData);
       axios.post("/api/login", userData).then(function (response) {
         return response;
       }).then(function (json) {
         if (json.data.success) {
+          /** TODO  remove **/
           var _userData = {
             id: json.data.id,
             name: json.data.name,
@@ -2679,14 +2664,19 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
             user: _userData
           };
           localStorage["appState"] = JSON.stringify(appState);
+          /** TODO  remove **/
+
+          var token = json.data.access_token;
+          localStorage["token"] = token;
 
           _this2.setState({
+            token: token,
             isLoggedIn: appState.isLoggedIn,
             user: appState.user,
             error: ''
           });
 
-          location.reload();
+          _this2.props.history.replace('/dashboard');
         } else {
           alert("Our System Failed To Register Your Account!");
         }
@@ -2722,26 +2712,13 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
       }));
     }
   }, {
-    key: "handleEmail",
-    value: function handleEmail(e) {
+    key: "handleInputs",
+    value: function handleInputs(e) {
+      var name = e.target.name;
       var value = e.target.value;
       this.setState(function (prevState) {
         return {
-          user: _objectSpread(_objectSpread({}, prevState.user), {}, {
-            email: value
-          })
-        };
-      });
-    }
-  }, {
-    key: "handlePassword",
-    value: function handlePassword(e) {
-      var value = e.target.value;
-      this.setState(function (prevState) {
-        return {
-          user: _objectSpread(_objectSpread({}, prevState.user), {}, {
-            password: value
-          })
+          user: _objectSpread(_objectSpread({}, prevState.user), {}, _defineProperty({}, name, value))
         };
       });
     }
@@ -2792,7 +2769,7 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
                   placeholder: "E-mail",
                   className: "form-control",
                   required: true,
-                  onChange: this.handleEmail
+                  onChange: this.handleInputs
                 })
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
                 className: "form-group",
@@ -2803,7 +2780,7 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
                   placeholder: "Password",
                   className: "form-control",
                   required: true,
-                  onChange: this.handlePassword
+                  onChange: this.handleInputs
                 })
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
                 disabled: this.state.formSubmitting,
@@ -2814,18 +2791,11 @@ var LoginContainer = /*#__PURE__*/function (_Component) {
               })]
             })]
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("p", {
-            className: "text-white",
+            className: "text-dark m-auto",
             children: ["Don't have an account? ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
               to: "/register",
               className: "text-yellow",
               children: " Register"
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
-              className: "pull-right",
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_3__.Link, {
-                to: "/",
-                className: "text-white",
-                children: "Back to Index"
-              })
             })]
           })]
         })
@@ -3119,22 +3089,24 @@ var RegisterContainer = /*#__PURE__*/function (_Component) {
         return response;
       }).then(function (json) {
         if (json.data.success) {
-          var _userData = {
-            id: json.data.id,
-            name: json.data.name,
-            email: json.data.email,
-            activation_token: json.data.activation_token
-          };
-          var appState = {
-            isRegistered: true,
-            user: _userData
-          };
-          localStorage["appState"] = JSON.stringify(appState);
+          alert(json.data.message);
 
-          _this2.setState({
-            isRegistered: appState.isRegistered,
-            user: appState.user
-          });
+          _this2.props.history.push('/login'); // let userData = {
+          //     id: json.data.id,
+          //     name: json.data.name,
+          //     email: json.data.email,
+          //     activation_token: json.data.activation_token,
+          // };
+          // let appState = {
+          //     isRegistered: true,
+          //     user: userData
+          // };
+          // localStorage["appState"] = JSON.stringify(appState);
+          // this.setState({
+          //     isRegistered: appState.isRegistered,
+          //     user: appState.user
+          // });
+
         } else {
           alert("Our System Failed To Register Your Account!");
         }
@@ -3168,8 +3140,7 @@ var RegisterContainer = /*#__PURE__*/function (_Component) {
       })["finally"](this.setState({
         error: ''
       }));
-    } //checked
-
+    }
   }, {
     key: "handleInputs",
     value: function handleInputs(e) {
@@ -3184,7 +3155,6 @@ var RegisterContainer = /*#__PURE__*/function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      // 2.6
       var errorMessage = this.state.errorMessage;
       var arr = [];
       Object.values(errorMessage).forEach(function (value) {
@@ -3198,7 +3168,7 @@ var RegisterContainer = /*#__PURE__*/function (_Component) {
             className: "offset-xl-3 col-xl-6 offset-lg-1 col-lg-10 col-md-12 col-sm-12 col-12 ",
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("h2", {
               children: "Create Your Account"
-            }), "// 2.7", this.state.isRegistered ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)((react_flash_message__WEBPACK_IMPORTED_MODULE_2___default()), {
+            }), this.state.isRegistered ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)((react_flash_message__WEBPACK_IMPORTED_MODULE_2___default()), {
               duration: 60000,
               persistOnHover: true,
               children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("h5", {
@@ -3281,13 +3251,6 @@ var RegisterContainer = /*#__PURE__*/function (_Component) {
                 to: "/login",
                 className: "text-yellow",
                 children: " Log In"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
-                className: "pull-right",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(react_router_dom__WEBPACK_IMPORTED_MODULE_4__.Link, {
-                  to: "/",
-                  className: "text-white",
-                  children: "Back to Home"
-                })
               })]
             })]
           })
@@ -3318,8 +3281,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _components_Header__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/Header */ "./resources/js/components/Header.js");
 /* harmony import */ var _components_Footer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../components/Footer */ "./resources/js/components/Footer.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react_flash_message__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-flash-message */ "./node_modules/react-flash-message/build/index.js");
+/* harmony import */ var react_flash_message__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_flash_message__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -3347,76 +3318,131 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var Home = /*#__PURE__*/function (_Component) {
   _inherits(Home, _Component);
 
   var _super = _createSuper(Home);
 
-  function Home() {
-    var _this;
+  function Home(props) {
+    var _this2;
 
     _classCallCheck(this, Home);
 
-    _this = _super.call(this);
-    _this.state = {
+    _this2 = _super.call(this, props);
+    _this2.state = {
       isLoggedIn: false,
       user: {}
     };
-    return _this;
-  } // check if user is authenticated and storing authentication data as states if true
-
+    return _this2;
+  }
 
   _createClass(Home, [{
     key: "UNSAFE_componentWillMount",
     value: function UNSAFE_componentWillMount() {
-      var state = localStorage["appState"];
+      var _this3 = this;
 
-      if (state) {
-        var AppState = JSON.parse(state);
-        this.setState({
-          isLoggedIn: AppState.isLoggedIn,
-          user: AppState.user
-        });
+      var token = localStorage["token"];
+
+      if (token) {
+        var _this = this;
+
+        var config = {
+          headers: {
+            Authorization: "Bearer ".concat(token)
+          }
+        };
+        axios.get('/api/user', config).then(function (res) {
+          return res;
+        }).then(function (json) {
+          if (!json.data.id) {
+            _this.props.history.push('/login');
+          }
+
+          var userData = {
+            id: json.data.id,
+            name: json.data.name,
+            email: json.data.email
+          };
+
+          _this.setState({
+            isLoggedIn: true,
+            user: _objectSpread({}, userData)
+          });
+        })["catch"](function (error) {
+          if (error.response) {
+            // The request was made and the server responded with a status code that falls out of the range of 2xx
+            var err = error.response.data;
+
+            _this3.setState({
+              error: err.message,
+              errorMessage: err.errors,
+              formSubmitting: false
+            });
+          } else if (error.request) {
+            // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+            var _err = error.request;
+
+            _this3.setState({
+              error: _err,
+              formSubmitting: false
+            });
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            var _err2 = error.message;
+
+            _this3.setState({
+              error: _err2,
+              formSubmitting: false
+            });
+          }
+        })["finally"](this.setState({
+          isLoggedIn: false,
+          user: {},
+          token: token
+        }));
       }
     } // 4.1
 
   }, {
     key: "render",
     value: function render() {
-      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("div", {
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_Header__WEBPACK_IMPORTED_MODULE_1__.default, {
-          userData: this.state.user,
-          userIsLoggedIn: this.state.isLoggedIn
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("span", {
-          children: "Whatever normally goes into the user dasboard page; the table below for instance"
-        }), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("table", {
+      var state = this.state;
+      console.log('state:::', state.user);
+      return state.user.id ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_components_Header__WEBPACK_IMPORTED_MODULE_1__.default, {
+          userData: state.user,
+          userIsLoggedIn: state.isLoggedIn
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("span", {
+          children: "Whatever normally goes into the user dashboard page; the table below for instance"
+        }), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("br", {}), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("table", {
           className: "table table-striped",
-          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tbody", {
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tr", {
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("th", {
+          children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tbody", {
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tr", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("th", {
                 scope: "row ",
                 children: "User Id"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
-                children: this.user.id
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("td", {
+                children: state.user.id
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tr", {
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("th", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tr", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("th", {
                 scope: "row ",
                 children: "Full Name"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
-                children: this.user.name
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("td", {
+                children: state.user.name
               })]
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)("tr", {
-              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("th", {
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)("tr", {
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("th", {
                 scope: "row ",
                 children: "Email"
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
-                children: this.user.email
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("td", {
+                children: state.user.email
               })]
             })]
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_Footer__WEBPACK_IMPORTED_MODULE_2__.default, {})]
-      });
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_components_Footer__WEBPACK_IMPORTED_MODULE_2__.default, {})]
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {});
     }
   }]);
 

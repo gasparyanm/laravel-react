@@ -27,4 +27,8 @@ Route::get('/register', function () {
     return view('welcome');
 })->name('register');
 
+Route::get('/{page}', function () {
+    return view('welcome');
+})->where('page', '.*');
+
 

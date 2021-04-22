@@ -56,51 +56,53 @@ class RegisterContainer extends Component {
                 return response;
             }).then(json => {
             if (json.data.success) {
-                let userData = {
-                    id: json.data.id,
-                    name: json.data.name,
-                    email: json.data.email,
-                    activation_token: json.data.activation_token,
-                };
-                let appState = {
-                    isRegistered: true,
-                    user: userData
-                };
-                localStorage["appState"] = JSON.stringify(appState);
-                this.setState({
-                    isRegistered: appState.isRegistered,
-                    user: appState.user
-                });
+                alert(json.data.message);
+                this.props.history.push('/login');
+                // let userData = {
+                //     id: json.data.id,
+                //     name: json.data.name,
+                //     email: json.data.email,
+                //     activation_token: json.data.activation_token,
+                // };
+                // let appState = {
+                //     isRegistered: true,
+                //     user: userData
+                // };
+                // localStorage["appState"] = JSON.stringify(appState);
+                // this.setState({
+                //     isRegistered: appState.isRegistered,
+                //     user: appState.user
+                // });
             } else {
                 alert(`Our System Failed To Register Your Account!`);
             }
-        }).catch(error => {if (error.response) {
-            // The request was made and the server responded with a status code that falls out of the range of 2xx
-            let err = error.response.data;
-            this.setState({
-                error: err.message,
-                errorMessage: err.errors,
-                formSubmitting: false
-            })
-        }
-        else if (error.request) {
-            // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-            let err = error.request;
-            this.setState({
-                error: err,
-                formSubmitting: false
-            })
-        } else {
-            // Something happened in setting up the request that triggered an Error
-            let err = error.message;
-            this.setState({
-                error: err,
-                formSubmitting: false
-            })
-        }
+        }).catch(error => {
+            if (error.response) {
+                // The request was made and the server responded with a status code that falls out of the range of 2xx
+                let err = error.response.data;
+                this.setState({
+                    error: err.message,
+                    errorMessage: err.errors,
+                    formSubmitting: false
+                })
+            }
+            else if (error.request) {
+                // The request was made but no response was received `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+                let err = error.request;
+                this.setState({
+                    error: err,
+                    formSubmitting: false
+                })
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                let err = error.message;
+                this.setState({
+                    error: err,
+                    formSubmitting: false
+                })
+            }
         }).finally(this.setState({error: ''}));
     }
-    //checked
     handleInputs(e) {
         let name = e.target.name;
         let value = e.target.value;
@@ -113,18 +115,17 @@ class RegisterContainer extends Component {
         }))
     }
     render() {
-        // 2.6
         let errorMessage = this.state.errorMessage;
         let arr = [];
         Object.values(errorMessage).forEach((value) => (
             arr.push(value)
         ));
+
         return (
             <div className="container">
                 <div className="row">
                     <div className="offset-xl-3 col-xl-6 offset-lg-1 col-lg-10 col-md-12 col-sm-12 col-12 ">
                         <h2>Create Your Account</h2>
-                        // 2.7
                         {this.state.isRegistered ? <FlashMessage duration={60000} persistOnHover={true}>
                             <h5 className={"alert alert-success"}>Registration successful, redirecting...</h5></FlashMessage> : ''}
                         {this.state.error ? <FlashMessage duration={900000} persistOnHover={true}>
@@ -151,7 +152,6 @@ class RegisterContainer extends Component {
                         </form>
                         <p>Already have an account?
                             <Link to="/login" className="text-yellow"> Log In</Link>
-                            <span className="pull-right"><Link to="/" className="text-white">Back to Home</Link></span>
                         </p>
                     </div>
                 </div>
