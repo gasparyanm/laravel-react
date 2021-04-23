@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redis;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +30,15 @@ Route::get('/register', function () {
 })->name('register');
 
 Route::get('/{page}', function () {
-    return view('welcome');
+    $query = $query ?? '';
+    dump($query);
+    $query = null;
+    dd($query);
+
+    Redis::set('test', 'sad');
+    dump(Redis::get('test'));
+    Cache::store('redis')->put('Laradock', 'Awesome', 100);
+    dd(Cache::get('Laradock'));
 })->where('page', '.*');
 
 
