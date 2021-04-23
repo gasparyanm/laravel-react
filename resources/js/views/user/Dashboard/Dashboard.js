@@ -16,10 +16,8 @@ class Home extends Component {
 
         if (token) {
             let _this = this;
-            let config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            axios.get('/api/user', config).then(res => {
+
+            axios.get('/api/user').then(res => {
                 return res;
             }).then(json => {
                 if (!json.data.id) {

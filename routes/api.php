@@ -22,6 +22,8 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:api')->group( function () {
     Route::get('user', [AuthController::class, 'user']);
+    Route::get('announcement-metas', [AuthController::class, 'getMetas']);
+//    Route::get('announcement-metas', [AnnouncementController::class, 'getMetas']);
 
     Route::resource('products', ProductController::class);
 });

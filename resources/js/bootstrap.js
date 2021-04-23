@@ -50,3 +50,11 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     forceTLS: true
 // });
+
+/**
+ * Add access token to axios
+ */
+
+ import authHeader from './services/auth-header'
+
+ authHeader();

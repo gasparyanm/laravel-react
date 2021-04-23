@@ -15,10 +15,8 @@ class EntityMetaSeed extends Seeder
     public function run()
     {
         // will be connected with entity
-        $entityMetas = EntityMeta::factory()
+        EntityMeta::factory()
             ->count(10)
             ->create();
-
-        dd($entityMetas);
     }
 }
